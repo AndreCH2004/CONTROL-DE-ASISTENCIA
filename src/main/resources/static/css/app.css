@@ -1,0 +1,60 @@
+.reloj {
+    font-size: 3rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.05em;
+}
+
+.local-registro .form-select {
+    min-width: 15rem;
+}
+
+.pestanas {
+    max-width: 36rem;
+    margin-inline: auto;
+}
+
+.fs-7 {
+    font-size: 0.7rem;
+}
+
+.border-dashed {
+    border: 2px dashed var(--bs-border-color);
+    background: transparent;
+    box-shadow: none !important;
+}
+
+.resultado {
+    animation: aparecer 0.25s ease-out;
+}
+
+.resultado .icono {
+    font-size: 3.5rem;
+    line-height: 1;
+}
+
+.dato {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--bs-secondary-color);
+}
+
+.valor {
+    font-size: 1.4rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+#tablaReporte td {
+    font-variant-numeric: tabular-nums;
+}
+
+@keyframes aparecer {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .resultado { animation: none; }
+}
