@@ -67,8 +67,7 @@ public class AsistenciaService {
     @Transactional
     public RegistroAsistencia registrarEntrada(String codigo, Integer idFrente, LocalDateTime momento) {
         Empleado empleado = validarCodigo(codigo);
-        FrenteObra frente = frentes.findById(idFrente)
-                .orElseThrow(() -> new NegocioException(HttpStatus.NOT_FOUND, "Frente de obra no encontrado"));
+        FrenteObra frente = validarFrenteActivo(idFrente);
         LocalDate fecha = momento.toLocalDate();
 
         registros.findByEmpleadoIdAndFechaRegistro(empleado.getId(), fecha).ifPresent(r -> {
@@ -107,6 +106,16 @@ public class AsistenciaService {
         return registros.save(registro);
     }
 
+    /** Valida que el frente exista y siga activo antes de registrar actividad. */
+    private FrenteObra validarFrenteActivo(Integer idFrente) {
+        FrenteObra frente = frentes.findById(idFrente)
+                .orElseThrow(() -> new NegocioException(HttpStatus.NOT_FOUND, "Frente de obra no encontrado"));
+        if (!frente.isEstado()) {
+            throw new NegocioException(HttpStatus.UNPROCESSABLE_ENTITY, "El frente de obra no está activo");
+        }
+        return frente;
+    }
+
     private static LocalTime hora(LocalDateTime momento) {
         return momento.toLocalTime().truncatedTo(ChronoUnit.SECONDS);
     }
@@ -117,8 +126,7 @@ public class AsistenciaService {
      */
     @Transactional
     public int marcarFaltas(LocalDate fecha, Integer idFrente) {
-        FrenteObra frente = frentes.findById(idFrente)
-                .orElseThrow(() -> new NegocioException(HttpStatus.NOT_FOUND, "Frente de obra no encontrado"));
+        FrenteObra frente = validarFrenteActivo(idFrente);
         int marcadas = 0;
         for (Empleado empleado : empleados.findByEstadoTrue()) {
             if (registros.findByEmpleadoIdAndFechaRegistro(empleado.getId(), fecha).isEmpty()) {
